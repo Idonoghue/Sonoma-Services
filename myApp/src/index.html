@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Ionic App</title>
+  <title>Sonoma Services</title>
 
   <base href="/" />
 
@@ -20,6 +20,24 @@
 
 <body>
   <app-root></app-root>
-</body>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="/__/firebase/6.0.2/firebase-app.js"></script>
 
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#reserved-urls -->
+  <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDl64H1qEUr8iYkmr17OieOAmCQdX5sei0",
+        authDomain: "sonoma-services.firebaseapp.com",
+        databaseURL: "https://sonoma-services.firebaseio.com",
+        projectId: "sonoma-services",
+        storageBucket: "sonoma-services.appspot.com",
+        messagingSenderId: "29595767043",
+        appId: "1:29595767043:web:fb18606509619de0"
+      };
+    </script>
+
+  <!-- Initialize Firebase -->
+  <script src="/__/firebase/init.js"></script>
+</body>
 </html>

@@ -1,2 +1,4 @@
 tasks:
     - command: npm install -g ionic
+    - command: npm install @angular/fire firebase --save
+    - command: npm install -g firebase-tools
