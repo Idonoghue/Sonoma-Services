@@ -22,9 +22,25 @@ const routes: Routes = [
     path: 'login',
     loadChildren: './login/login.module#LoginPageModule'
   },
-  { path: 'reset-password', loadChildren: './reset-password/reset-password.module#ResetPasswordPageModule' },
-  { path: 'signup', loadChildren: './signup/signup.module#SignupPageModule' },
-  { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule' }
+  {
+    path: 'reset-password',
+    loadChildren: './reset-password/reset-password.module#ResetPasswordPageModule',
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'signup',
+    loadChildren: './signup/signup.module#SignupPageModule'
+  },
+  {
+    path: 'profile',
+    loadChildren: './profile/profile.module#ProfilePageModule' ,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'schedule',
+    loadChildren: './schedule/schedule.module#SchedulePageModule',
+    canActivate: [AuthGuard]
+  }
 ];
 
 @NgModule({

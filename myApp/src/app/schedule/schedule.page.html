@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Schedule
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list> <ion-list-header> Schedule </ion-list-header> </ion-list>
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngFor="let shift of shifts">
+        {{shift.data().shiftStart.toDate()}}
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

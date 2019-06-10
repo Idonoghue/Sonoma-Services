@@ -17,16 +17,16 @@ export class AppComponent {
       title: 'Home',
       url: '/home',
       icon: 'home'
-    },
+    },/*
     {
       title: 'List',
       url: '/list',
       icon: 'list'
-    },
+    },*/
     {
-      title: 'Login',
-      url: '/login',
-      icon: 'login'
+      title: 'Schedule',
+      url: '/schedule',
+      icon: 'calendar'
     }
   ];
 

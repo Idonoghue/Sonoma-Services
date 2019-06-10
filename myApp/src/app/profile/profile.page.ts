@@ -29,6 +29,7 @@ export class ProfilePage implements OnInit {
         this.birthDate = userProfileSnapshot.data().birthDate;
       });
   }
+
   logOut(): void {
     this.authService.logoutUser().then( () => {
       this.router.navigateByUrl('login');
