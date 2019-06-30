@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -10,12 +10,24 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-list> <ion-list-header> Schedule </ion-list-header> </ion-list>
-  <ion-grid>
-    <ion-row>
-      <ion-col *ngFor="let shift of shifts">
-        {{shift.data().shiftStart.toDate()}}
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngFor="let date of dateList">
+          <ion-item-group>
+            <ion-item-divider>
+              <ion-label>
+                {{date.getWeekDay()}}
+                {{date.getAbbrMonth()}}
+                {{date.getDate()}}
+              </ion-label>
+            </ion-item-divider>
+            <ng-container *ngFor="let shift of shifts">
+              <ion-item *ngIf="shift.data().shiftStart.toDate().getDate() == date.getDate()">
+                {{shift.employeeNick}}: {{shift.data().shiftStart.toDate().getTimeStandard()}} - {{shift.data().shiftEnd.toDate().getTimeStandard()}}
+              </ion-item>
+            </ng-container>
+          </ion-item-group>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 </ion-content>

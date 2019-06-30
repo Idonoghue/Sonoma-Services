@@ -14,8 +14,18 @@ export class ShiftsService {
 
   getFutureShifts() {
       var db = firebase.firestore();
-      var allShifts = db.collection("shifts");
+      var shifts = db.collection("shifts");
       var current = firebase.firestore.Timestamp.now();
-      return allShifts.where('shiftClose', '>', current);
+      return shifts.where('shiftEnd', '>', current);
+  }
+  getEmployeeFromShift(shift: any) {
+      var db = firebase.firestore();
+      var employees = db.collection("employees");
+      return employees.doc(shift.data().employee.id);
+  }
+  getAllEmployees() {
+      var db = firebase.firestore();
+      var employees = db.collection("employees");
+      return employees
   }
 }
