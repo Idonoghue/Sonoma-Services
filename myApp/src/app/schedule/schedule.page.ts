@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { ShiftsService } from '../services/schedule/shifts.service';
+import { ScheduleImportModalPage } from '../schedule-import-modal/schedule-import-modal.page';
 
 @Component({
   selector: 'app-schedule',
@@ -11,7 +13,8 @@ export class SchedulePage implements OnInit {
   public employees: any;
   public dateList: Array<Date>;
   constructor(
-      private shiftsService: ShiftsService
+      private shiftsService: ShiftsService,
+      public modalController: ModalController
       ) { }
 
   ngOnInit() {
@@ -62,6 +65,15 @@ export class SchedulePage implements OnInit {
         }
       }
     }
+  }
+  async presentModal() {
+    const modal = await this.modalController.create({
+      component: ScheduleImportModalPage,
+      componentProps: {
+        'modalCtrl': this.modalController
+      }
+    });
+    return await modal.present();
   }
 }
 

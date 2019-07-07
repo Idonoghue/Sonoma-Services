@@ -40,6 +40,11 @@ const routes: Routes = [
     path: 'schedule',
     loadChildren: './schedule/schedule.module#SchedulePageModule',
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'schedule-import-modal',
+    loadChildren: './schedule-import-modal/schedule-import-modal.module#ScheduleImportModalPageModule',
+    canActivate: [AuthGuard]
   }
 ];
 
