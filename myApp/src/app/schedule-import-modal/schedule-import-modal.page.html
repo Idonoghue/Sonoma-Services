@@ -25,11 +25,11 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                <h3>Select files</h3>
-                Multiple
-                <input type="file" ng2FileSelect multiple  /><br/>
-                Single
-                <input type="file" ng2FileSelect/>
+                Pro Shop Schedule
+                <input type="file" (change)="parseFile($event.target.files, true)"/>
+                <br>Outside Schedule
+                <input type="file" (change)="parseFile($event.target.files, false)"/>
+                {{fileContent}}
             </div>
             <div class="col-md-9" style="margin-bottom: 40px">
                 <h3>Upload queue</h3>
