@@ -10,8 +10,10 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ScheduleImportModalPage } from './schedule-import-modal/schedule-import-modal.page';
 
+import { FileSelectDirective } from 'ng2-file-upload';
+
 @NgModule({
-  declarations: [AppComponent, ScheduleImportModalPage],
+  declarations: [AppComponent, ScheduleImportModalPage, FileSelectDirective],
   entryComponents: [ScheduleImportModalPage],
   imports: [
     BrowserModule,

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { NavParams } from '@ionic/angular';
 import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { FileHandlerService } from '../services/schedule/file-handler.service';
+import { ShiftsService } from '../services/schedule/shifts.service';
 
 @Component({
   selector: 'app-schedule-import-modal',
@@ -13,8 +14,10 @@ export class ScheduleImportModalPage {
   @Input() modalCtrl;
   public uploader:FileUploader = new FileUploader({});
   public fileContent: string | ArrayBuffer = '';
+  public shiftArray: Array<Array<String>>
 
-  constructor(navParams: NavParams) {
+  constructor(navParams: NavParams,
+              private shiftsService: ShiftsService) {
     // componentProps can also be accessed at construction time using NavParams
     // console.log(navParams.get('modalCtrl'));
     // const URL = 'path_to_api';
@@ -27,7 +30,7 @@ export class ScheduleImportModalPage {
       return fileItem.file;
     });
   }
-  parseFile(fileList: FileList, scheduleType: boolean): void {
+  parseFile(fileList: FileList): void {
     let file = fileList[0];
     let fileReader: FileReader = new FileReader();
     let self = this;
@@ -35,8 +38,24 @@ export class ScheduleImportModalPage {
     fileReader.onloadend = function(e) {
       self.fileContent = fileReader.result;
       var fileHandler = new FileHandlerService();
-      fileHandler.parseAndUpload(scheduleType, self.fileContent)
+      self.shiftArray = fileHandler.parseFile(self.fileContent)
+      console.log(self.shiftArray);
+      self.uploadShifts();
     }
+    // temporary: Will add a seperate button to modal later
+  }
+  uploadShifts(): void {
+    // iterate through array and create new doc for Shifts collection
+    // call shift service to handle each specific shift element
+    // error check shiftArray using shifts service
+    for(let i = 0; i < this.shiftArray.length; i++){
+      this.shiftsService.uploadNewShift(this.shiftArray[i]);
+    }
+    return;
+  }
+  removeAllShifts(): void {
+      this.shiftsService.removeAllShifts();
+      return;
   }
   dismiss() {
     // using the injected ModalController this page

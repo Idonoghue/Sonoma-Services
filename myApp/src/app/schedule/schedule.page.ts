@@ -39,29 +39,26 @@ export class SchedulePage implements OnInit {
     var endDate = startDate;
     // console.log(this.shifts.length);
     for(var x = 0; x < this.shifts.length; x++){
-      console.log(this.shifts[x].data().employee.id);
       // get the latest date in the list of future shifts
       if(this.shifts[x].data().shiftEnd.toDate() > endDate){
         endDate = this.shifts[x].data().shiftEnd.toDate();
       }
     }
-    console.log(endDate);
     // list all dates between now and last date with a shift into dateList
     this.dateList = [];
     for(var i = startDate; i <= endDate; i = i.addDays(1)){
       this.dateList.push(i);
     }
-    console.log(this.dateList);
     // console.log(this.dateList);
     return;
   }
   getShiftEmployees(): void {
     for(var x = 0; x < this.shifts.length; x++){
-      // console.log("shift employee ref: " + this.shifts[x].data().employee.id);
+      //console.log("shift employee ref: " + this.shifts[x].data().employee.id);
       for(var y = 0; y < this.employees.length; y++) {
-        // console.log("employee ID: " + this.employees[y].id);
-        if(this.shifts[x].data().employee.id == this.employees[y].id) {
+        if(this.shifts[x].data().employee == this.employees[y].id) {
           this.shifts[x].employeeNick = this.employees[y].data().Nick;
+          //console.log("employee ID Match Found: " + this.shifts[x].employeeNick + this.employees[y].id);
         }
       }
     }

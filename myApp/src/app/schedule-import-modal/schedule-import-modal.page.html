@@ -25,11 +25,11 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                Pro Shop Schedule
-                <input type="file" (change)="parseFile($event.target.files, true)"/>
-                <br>Outside Schedule
-                <input type="file" (change)="parseFile($event.target.files, false)"/>
-                {{fileContent}}
+                CSV Schedule File
+                <input type="file" ng2FileSelect [uploader]=uploader  (change)="parseFile($event.target.files)"/>
+                <button type= "button" (click)="removeAllShifts()" class="btn btn-danger btn-xs">
+                    Remove All Shifts
+                </button>
             </div>
             <div class="col-md-9" style="margin-bottom: 40px">
                 <h3>Upload queue</h3>
