@@ -48,7 +48,7 @@ export class ScheduleImportModalPage {
     // iterate through array and create new doc for Shifts collection
     // call shift service to handle each specific shift element
     // error check shiftArray using shifts service
-    for(let i = 0; i < this.shiftArray.length; i++){
+    for(let i = 0; i < this.shiftArray.length - 1; i++){
       this.shiftsService.uploadNewShift(this.shiftArray[i]);
     }
     return;

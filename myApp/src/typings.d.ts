@@ -5,3 +5,7 @@ interface Date {
     getTimeStandard() : string;
     getWeekDay() : string;
 }
+
+interface Array<T> {
+    sortBy( param : any ) : any;
+}

@@ -12,10 +12,15 @@ export class SchedulePage implements OnInit {
   public shifts: any;
   public employees: any;
   public dateList: Array<Date>;
+  public shiftTypes;
+  public shiftsOrganized: any;
   constructor(
       private shiftsService: ShiftsService,
       public modalController: ModalController
-      ) { }
+      ) {
+          this.shiftTypes = ['Golf Shop', 'Outside Services', 'Other'];
+
+       }
 
   ngOnInit() {
     this.shiftsService
@@ -25,6 +30,7 @@ export class SchedulePage implements OnInit {
           this.shifts = shiftsSnapshot.docs;
           console.log(this.shifts);
           this.initializeDateList(new Date());
+          this.initializeShiftList();
       });
     this.shiftsService
       .getAllEmployees()
@@ -63,6 +69,37 @@ export class SchedulePage implements OnInit {
       }
     }
   }
+  initializeShiftList(): void {
+    let rows = this.dateList.length
+    let columns = this.shifts.length
+    // prematurely sort shifts by start timestamp
+    this.shifts.sortBy(this.shifts[0].data().shiftStart);
+    this.shiftsOrganized = [[]]
+    // restructure shifts into 2D array by date
+    let dateIter = 0;
+    let shiftIter = 0;
+    for (var i = 0; i < this.shifts.length;i++) {
+      let shiftDate = this.shifts[i].data().shiftStart;
+      shiftDate = shiftDate.toDate();
+      console.log(shiftDate);
+      console.log(this.dateList[dateIter]);
+      console.log("dateIter: " + dateIter);
+      console.log("shiftIter: " + shiftIter);
+      if (shiftDate.getDay() == this.dateList[dateIter].getDay()) {
+        this.shiftsOrganized[dateIter][shiftIter] = this.shifts[i];
+        shiftIter++;
+      }
+      else {
+        shiftIter = 0;
+        if(dateIter < this.dateList.length - 1) {
+          dateIter++;
+          this.shiftsOrganized.push([]);
+        }
+        else break;
+      }
+    }
+    console.table(this.shiftsOrganized)
+  }
   async presentModal() {
     const modal = await this.modalController.create({
       component: ScheduleImportModalPage,
@@ -72,6 +109,13 @@ export class SchedulePage implements OnInit {
     });
     return await modal.present();
   }
+}
+
+
+function toDateTime(secs) {
+  var t = new Date(1970, 0, 1); // Epoch
+  t.setSeconds(secs);
+return t;
 }
 
 Date.prototype.addDays = function(days: number) {
@@ -146,4 +190,28 @@ Date.prototype.getAbbrMonth = function() {
       case 11:
         return 'Dec';
     }
+}
+
+Array.prototype.sortBy = function(){
+  if (typeof Object.defineProperty === 'function'){
+    try{Object.defineProperty(Array.prototype,'sortBy',{value:sb}); }catch(e){}
+  }
+  if (!Array.prototype.sortBy) Array.prototype.sortBy = sb;
+
+  function sb(f){
+    for (var i=this.length;i;){
+      var o = this[--i];
+      this[i] = [].concat(f.call(o,o,i),o);
+    }
+    this.sort(function(a,b){
+      for (var i=0,len=a.length;i<len;++i){
+        if (a[i]!=b[i]) return a[i]<b[i]?-1:1;
+      }
+      return 0;
+    });
+    for (var i=this.length;i;){
+      this[--i]=this[i][this[i].length-1];
+    }
+    return this;
+  }
 }

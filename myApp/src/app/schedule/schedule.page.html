@@ -1,5 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <!-- Left Side Bar -->
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -16,23 +17,32 @@
 
 <ion-content padding>
     <ion-grid>
-      <ion-row>
-        <ion-col *ngFor="let date of dateList">
-          <ion-item-group>
-            <ion-item-divider>
-              <ion-label>
-                {{date.getWeekDay()}}
-                {{date.getAbbrMonth()}}
-                {{date.getDate()}}
-              </ion-label>
-            </ion-item-divider>
-            <ng-container *ngFor="let shift of shifts">
-              <ion-item *ngIf="shift.data().shiftStart.toDate().getDate() == date.getDate()">
-                {{shift.employeeNick}}: {{shift.data().shiftStart.toDate().getTimeStandard()}} - {{shift.data().shiftEnd.toDate().getTimeStandard()}}
-              </ion-item>
-            </ng-container>
-          </ion-item-group>
+      <div class="scroll" scrollX="true">
+      <ion-row flex-wrap: nowrap>
+      <!--<ion-virtual-scroll direction="x" class="wide-as-needed">-->
+        <ion-col *ngFor="let shiftsOnDate of shiftsOrganized" size=4>
+            <ion-card>
+                <ion-card-title>
+                    {{shiftsOnDate[0].data().shiftStart.toDate().getWeekDay()}}
+                    {{shiftsOnDate[0].data().shiftStart.toDate().getAbbrMonth()}}
+                    {{shiftsOnDate[0].data().shiftStart.toDate().getDate()}}
+                </ion-card-title>
+                <ion-card *ngFor="let type of shiftTypes">
+                    <ion-card-title>{{type}}</ion-card-title>
+                    <ion-item-divider>
+                    </ion-item-divider>
+                    <ng-container *ngFor="let shift of shiftsOnDate">
+                        <ion-item *ngIf="shift.data().type == type || ((shift.data().type != 'Outside Services' && shift.data().type != 'Golf Shop') && type == 'Other')">
+                            {{shift.employeeNick}}: {{shift.data().shiftStart.toDate().getTimeStandard()}} - {{shift.data().shiftEnd.toDate().getTimeStandard()}}
+                            <br>
+                            <ion-label *ngIf="type == 'Other'"> {{shift.data().type}} </ion-label>
+                        </ion-item>
+                    </ng-container>
+                </ion-card>
+            </ion-card>
         </ion-col>
+        <!--</ion-virtual-scroll>-->
       </ion-row>
+      </div>
     </ion-grid>
 </ion-content>
