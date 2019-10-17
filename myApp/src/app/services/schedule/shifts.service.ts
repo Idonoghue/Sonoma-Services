@@ -3,12 +3,15 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 
+const CLOSE_HOUR = 20;
+const CLOSE_MIN = 0;
+const OPEN_HOUR = 6;
+const OPEN_MIN = 30;
+
 @Injectable({
   providedIn: 'root'
 })
-
 export class ShiftsService {
-
   constructor() {
   }
 
@@ -27,6 +30,20 @@ export class ShiftsService {
       var db = firebase.firestore();
       var employees = db.collection("employees");
       return employees;
+  }
+
+  getOpenTime() {
+    let openTime = new Date(Date.now());
+    openTime.setMinutes(OPEN_MIN);
+    openTime.setHours(OPEN_HOUR)
+    return openTime;
+  }
+
+  getCloseTime() {
+    let closeTime = new Date(Date.now());
+    closeTime.setMinutes(CLOSE_MIN);
+    closeTime.setHours(CLOSE_HOUR)
+    return closeTime;
   }
 
   uploadNewShift(shiftArr) {

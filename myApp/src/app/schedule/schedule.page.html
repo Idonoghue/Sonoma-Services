@@ -17,10 +17,8 @@
 
 <ion-content padding>
     <ion-grid>
-      <div class="scroll" scrollX="true">
-      <ion-row flex-wrap: nowrap>
-      <!--<ion-virtual-scroll direction="x" class="wide-as-needed">-->
-        <ion-col *ngFor="let shiftsOnDate of shiftsOrganized" size=4>
+      <ion-row flex-wrap: nowrap class="scroll" scrollX="true">
+        <ion-col *ngFor="let shiftsOnDate of shiftsOrganized" size=4 class="scroll" scrollX="true">
             <ion-card>
                 <ion-card-title>
                     {{shiftsOnDate[0].data().shiftStart.toDate().getWeekDay()}}
@@ -31,18 +29,24 @@
                     <ion-card-title>{{type}}</ion-card-title>
                     <ion-item-divider>
                     </ion-item-divider>
-                    <ng-container *ngFor="let shift of shiftsOnDate">
-                        <ion-item *ngIf="shift.data().type == type || ((shift.data().type != 'Outside Services' && shift.data().type != 'Golf Shop') && type == 'Other')">
-                            {{shift.employeeNick}}: {{shift.data().shiftStart.toDate().getTimeStandard()}} - {{shift.data().shiftEnd.toDate().getTimeStandard()}}
-                            <br>
-                            <ion-label *ngIf="type == 'Other'"> {{shift.data().type}} </ion-label>
-                        </ion-item>
+                    <ng-container class="item-text-wrap" *ngFor="let shift of shiftsOnDate">
+                        <ion-card *ngIf="shift.data().type == type || ((shift.data().type != 'Outside Services' && shift.data().type != 'Golf Shop') && type == 'Other')" button="true">
+                            <ion-card-content>
+                              <ng-container [ngSwitch]="true">
+                                <ion-label *ngSwitchCase="isOpenShift(shift.data().shiftStart.toDate()) && isCloseShift(shift.data().shiftEnd.toDate())"> {{shift.employeeNick}}: Open - Close}} </ion-label>
+                                <ion-label *ngSwitchCase="isOpenShift(shift.data().shiftStart.toDate()) && !isCloseShift(shift.data().shiftEnd.toDate())"> {{shift.employeeNick}}: Open - {{shift.data().shiftEnd.toDate().getTimeStandard()}} </ion-label>
+                                <ion-label *ngSwitchCase="!isOpenShift(shift.data().shiftStart.toDate()) && isCloseShift(shift.data().shiftEnd.toDate())"> {{shift.employeeNick}}: {{shift.data().shiftStart.toDate().getTimeStandard()}} - Close </ion-label>
+                                <ion-label *ngSwitchDefault> {{shift.employeeNick}}: {{shift.data().shiftStart.toDate().getTimeStandard()}} - {{shift.data().shiftEnd.toDate().getTimeStandard()}} </ion-label>
+                              </ng-container>
+                              <div *ngIf="type == 'Other'">
+                                {{shift.data().type}}
+                              </div>
+                            </ion-card-content>
+                        </ion-card>
                     </ng-container>
                 </ion-card>
             </ion-card>
         </ion-col>
-        <!--</ion-virtual-scroll>-->
       </ion-row>
-      </div>
     </ion-grid>
 </ion-content>

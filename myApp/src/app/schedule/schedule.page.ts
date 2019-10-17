@@ -8,12 +8,16 @@ import { ScheduleImportModalPage } from '../schedule-import-modal/schedule-impor
   templateUrl: './schedule.page.html',
   styleUrls: ['./schedule.page.scss'],
 })
+
 export class SchedulePage implements OnInit {
   public shifts: any;
   public employees: any;
   public dateList: Array<Date>;
   public shiftTypes;
   public shiftsOrganized: any;
+  public openTime: Date;
+  public closeTime: Date;
+  public console = console;
   constructor(
       private shiftsService: ShiftsService,
       public modalController: ModalController
@@ -39,6 +43,8 @@ export class SchedulePage implements OnInit {
         this.employees = employeesSnapshot.docs;
         this.getShiftEmployees();
       });
+    this.openTime = this.shiftsService.getOpenTime()
+    this.closeTime = this.shiftsService.getCloseTime()
   }
 
   initializeDateList(startDate: Date): void {
@@ -99,7 +105,19 @@ export class SchedulePage implements OnInit {
       }
     }
     console.table(this.shiftsOrganized)
+    return;
   }
+
+  isOpenShift(shiftStart) {
+    if (shiftStart.getHours() == this.openTime.getHours() && shiftStart.getMinutes() == this.openTime.getMinutes()) return true;
+    else return false;
+  }
+
+  isCloseShift(shiftEnd) {
+    if (shiftEnd.getHours() == this.closeTime.getHours() && shiftEnd.getMinutes() == this.closeTime.getMinutes()) return true;
+    else return false;
+  }
+
   async presentModal() {
     const modal = await this.modalController.create({
       component: ScheduleImportModalPage,
