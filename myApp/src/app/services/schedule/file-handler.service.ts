@@ -8,33 +8,55 @@ export class FileHandlerService {
   constructor() { }
 
   parseFile(content: string | ArrayBuffer) {
-    // formatting const's
+    // shift formatting const's
     const ROW_LENGTH = 4;
     const NAME_COL = 0;
     const SHIFT_TYPE_COL = 1;
     const SHIFT_START_COL = 2;
     const SHIFT_END_COL = 3;
 
+    // day formatting const's
+    const DATE_COL = 0;
+    const DAY_INFO_COL = 1;
+    const SHIRT_START_COL = 2;
+
     // parse into string array
-    let contentArray = this.parse(content);
+    let [contentArray, dayArray] = this.parse(content);
 
     let parsedArray = contentArray;
+    let parsedDayArray = dayArray;
     for(var shiftIter = 1; shiftIter < contentArray.length - 1; shiftIter++){
         parsedArray[shiftIter][NAME_COL] = this.getEmployeeIDFromName(contentArray[shiftIter][NAME_COL]);
         parsedArray[shiftIter][SHIFT_START_COL] = this.roundToMinute(this.ExcelDateToJSDate(contentArray[shiftIter][SHIFT_START_COL]));
         parsedArray[shiftIter][SHIFT_END_COL] = this.roundToMinute(this.ExcelDateToJSDate(contentArray[shiftIter][SHIFT_END_COL]));
     }
-    return parsedArray;
+    for(var shiftIter = 1; shiftIter < parsedDayArray.length - 1; shiftIter++){
+        parsedDayArray[shiftIter][DATE_COL] = this.roundToMinute(this.ExcelDateToJSDate(dayArray[shiftIter][DATE_COL]));
+        parsedDayArray[shiftIter][DAY_INFO_COL] = dayArray[shiftIter][DAY_INFO_COL];
+        parsedDayArray[shiftIter][SHIRT_START_COL] = dayArray[shiftIter][SHIRT_START_COL];
+    }
+    parsedDayArray.shift();
+    parsedDayArray.pop();
+    console.table(parsedDayArray);
+    return [parsedArray, parsedDayArray];
   }
 
   private parse(content: string | ArrayBuffer) {
     content = <string>content;
+    var dayContent;
+    [content, dayContent] = content.split('Date,Day Info,Shirt / Start Info,')
     var contentRows = content.split('\r\n');
+    var dayContentRows = dayContent.split('\r\n');
     var contentArray = [[]];
+    var dayContentArray = [[]];
+
     for(var rows = 0; rows < contentRows.length; rows++){
       contentArray[rows] = contentRows[rows].split(',');
     }
-    return contentArray;
+    for(var rows = 0; rows < dayContentRows.length; rows++){
+      dayContentArray[rows] = dayContentRows[rows].split(',');
+    }
+    return [contentArray, dayContentArray];
   }
 
   private getEmployeeIDFromName(name: string) {

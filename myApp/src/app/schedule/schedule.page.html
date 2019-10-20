@@ -21,15 +21,21 @@
         <ion-col *ngFor="let shiftsOnDate of shiftsOrganized" size=4 class="scroll" scrollX="true">
             <ion-card>
                 <ion-card-title>
-                    {{shiftsOnDate[0].data().shiftStart.toDate().getWeekDay()}}
-                    {{shiftsOnDate[0].data().shiftStart.toDate().getAbbrMonth()}}
-                    {{shiftsOnDate[0].data().shiftStart.toDate().getDate()}}
+                    {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getWeekDay()}}
+                    {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getAbbrMonth()}}
+                    {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getDate()}}
                 </ion-card-title>
+                <ion-card *ngIf="shiftsOnDate.shirtStartInfo != ''">
+                  {{shiftsOnDate.shirtStartInfo}}
+                </ion-card>
+                <ion-card-content>
+                {{shiftsOnDate.dayInfo}}
+                </ion-card-content>
                 <ion-card *ngFor="let type of shiftTypes">
                     <ion-card-title>{{type}}</ion-card-title>
                     <ion-item-divider>
                     </ion-item-divider>
-                    <ng-container class="item-text-wrap" *ngFor="let shift of shiftsOnDate">
+                    <ng-container class="item-text-wrap" *ngFor="let shift of shiftsOnDate.shifts">
                         <ion-card *ngIf="shift.data().type == type || ((shift.data().type != 'Outside Services' && shift.data().type != 'Golf Shop') && type == 'Other')" button="true">
                             <ion-card-content>
                               <ng-container [ngSwitch]="true">

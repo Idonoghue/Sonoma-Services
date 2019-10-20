@@ -15,6 +15,7 @@ export class ScheduleImportModalPage {
   public uploader:FileUploader = new FileUploader({});
   public fileContent: string | ArrayBuffer = '';
   public shiftArray: Array<Array<String>>
+  public dayArray: Array<Array<String>>
 
   constructor(navParams: NavParams,
               private shiftsService: ShiftsService) {
@@ -38,9 +39,10 @@ export class ScheduleImportModalPage {
     fileReader.onloadend = function(e) {
       self.fileContent = fileReader.result;
       var fileHandler = new FileHandlerService();
-      self.shiftArray = fileHandler.parseFile(self.fileContent)
-      console.log(self.shiftArray);
+      [self.shiftArray, self.dayArray] = fileHandler.parseFile(self.fileContent)
+      console.log(self.dayArray);
       self.uploadShifts();
+      self.uploadDays();
     }
     // temporary: Will add a seperate button to modal later
   }
@@ -50,6 +52,12 @@ export class ScheduleImportModalPage {
     // error check shiftArray using shifts service
     for(let i = 0; i < this.shiftArray.length - 1; i++){
       this.shiftsService.uploadNewShift(this.shiftArray[i]);
+    }
+    return;
+  }
+  uploadDays(): void {
+    for(let i = 0; i < this.dayArray.length; i++){
+      this.shiftsService.uploadNewDay(this.dayArray[i]);
     }
     return;
   }

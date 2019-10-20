@@ -12,6 +12,7 @@ import { ScheduleImportModalPage } from '../schedule-import-modal/schedule-impor
 export class SchedulePage implements OnInit {
   public shifts: any;
   public employees: any;
+  public days: any;
   public dateList: Array<Date>;
   public shiftTypes;
   public shiftsOrganized: any;
@@ -28,11 +29,18 @@ export class SchedulePage implements OnInit {
 
   ngOnInit() {
     this.shiftsService
+      .getFutureDays()
+      .get()
+      .then( daysSnapshot => {
+          this.days = daysSnapshot.docs;
+          console.log("days table: ")
+          this.initializeDayList();
+      })
+    this.shiftsService
       .getFutureShifts()
       .get()
       .then( shiftsSnapshot => {
           this.shifts = shiftsSnapshot.docs;
-          console.log(this.shifts);
           this.initializeDateList(new Date());
           this.initializeShiftList();
       });
@@ -48,9 +56,8 @@ export class SchedulePage implements OnInit {
   }
 
   initializeDateList(startDate: Date): void {
-    var endDate = startDate;
-    // console.log(this.shifts.length);
-    for(var x = 0; x < this.shifts.length; x++){
+    let endDate = startDate;
+    for(let x = 0; x < this.shifts.length; x++){
       // get the latest date in the list of future shifts
       if(this.shifts[x].data().shiftEnd.toDate() > endDate){
         endDate = this.shifts[x].data().shiftEnd.toDate();
@@ -58,54 +65,68 @@ export class SchedulePage implements OnInit {
     }
     // list all dates between now and last date with a shift into dateList
     this.dateList = [];
-    for(var i = startDate; i <= endDate; i = i.addDays(1)){
+    for(let i = startDate; i <= endDate; i = i.addDays(1)){
       this.dateList.push(i);
     }
     // console.log(this.dateList);
     return;
   }
-  getShiftEmployees(): void {
-    for(var x = 0; x < this.shifts.length; x++){
-      //console.log("shift employee ref: " + this.shifts[x].data().employee.id);
-      for(var y = 0; y < this.employees.length; y++) {
-        if(this.shifts[x].data().employee == this.employees[y].id) {
-          this.shifts[x].employeeNick = this.employees[y].data().Nick;
-          //console.log("employee ID Match Found: " + this.shifts[x].employeeNick + this.employees[y].id);
-        }
-      }
-    }
+  initializeDayList(): void {
+    this.days = this.days.map(x => {
+      return {date: x.data().date, dayInfo: x.data().dayInfo, shirtStartInfo: x.data().shirtStartInfo}
+    });
+
+    this.days.sort((a, b) => a.date > b.date ? a : b)
+    console.table(this.days)
+    return;
   }
   initializeShiftList(): void {
     let rows = this.dateList.length
     let columns = this.shifts.length
     // prematurely sort shifts by start timestamp
     this.shifts.sortBy(this.shifts[0].data().shiftStart);
-    this.shiftsOrganized = [[]]
+    this.shiftsOrganized = [{shifts: [], dayInfo: "", shirtStartInfo: ""}]
     // restructure shifts into 2D array by date
     let dateIter = 0;
     let shiftIter = 0;
-    for (var i = 0; i < this.shifts.length;i++) {
+    for (let i = 0; i < this.shifts.length;i++) {
       let shiftDate = this.shifts[i].data().shiftStart;
       shiftDate = shiftDate.toDate();
-      console.log(shiftDate);
-      console.log(this.dateList[dateIter]);
-      console.log("dateIter: " + dateIter);
-      console.log("shiftIter: " + shiftIter);
       if (shiftDate.getDay() == this.dateList[dateIter].getDay()) {
-        this.shiftsOrganized[dateIter][shiftIter] = this.shifts[i];
+        this.shiftsOrganized[dateIter].shifts[shiftIter] = this.shifts[i];
         shiftIter++;
       }
       else {
         shiftIter = 0;
         if(dateIter < this.dateList.length - 1) {
+          console.log(this.days)
+          this.shiftsOrganized[dateIter].dayInfo =  this.days[dateIter].dayInfo
+          this.shiftsOrganized[dateIter].shirtStartInfo = this.days[dateIter].shirtStartInfo
           dateIter++;
-          this.shiftsOrganized.push([]);
+          let newObj = {};
+          newObj["shifts"] = [];
+          newObj["dayInfo"] = ""
+          newObj["shirtStartInfo"] = ""
+          console.log(newObj);
+          this.shiftsOrganized.push(newObj);
         }
         else break;
       }
     }
+    console.log("shifts Organized: ")
     console.table(this.shiftsOrganized)
     return;
+  }
+  getShiftEmployees(): void {
+    for(let x = 0; x < this.shifts.length; x++){
+      //console.log("shift employee ref: " + this.shifts[x].data().employee.id);
+      for(let y = 0; y < this.employees.length; y++) {
+        if(this.shifts[x].data().employee == this.employees[y].id) {
+          this.shifts[x].employeeNick = this.employees[y].data().Nick;
+          //console.log("employee ID Match Found: " + this.shifts[x].employeeNick + this.employees[y].id);
+        }
+      }
+    }
   }
 
   isOpenShift(shiftStart) {
@@ -129,15 +150,8 @@ export class SchedulePage implements OnInit {
   }
 }
 
-
-function toDateTime(secs) {
-  var t = new Date(1970, 0, 1); // Epoch
-  t.setSeconds(secs);
-return t;
-}
-
 Date.prototype.addDays = function(days: number) {
-    var date = new Date(this.valueOf());
+    let date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
 }
@@ -162,8 +176,8 @@ Date.prototype.getWeekDay = function() {
 }
 
 Date.prototype.getTimeStandard = function() {
-    var hours = this.getHours();
-    var AMPM;
+    let hours = this.getHours();
+    let AMPM;
     if(hours > 12){
         AMPM = 'PM';
         hours = hours % 12;
@@ -176,7 +190,7 @@ Date.prototype.getTimeStandard = function() {
         AMPM = 'AM'
         hours = 12;
     }
-    var minutes = this.getMinutes().toString();
+    let minutes = this.getMinutes().toString();
     if(minutes == '0') minutes = '00';
     return(hours.toString() + ':' + minutes + AMPM)
 }
@@ -217,8 +231,8 @@ Array.prototype.sortBy = function(){
   if (!Array.prototype.sortBy) Array.prototype.sortBy = sb;
 
   function sb(f){
-    for (var i=this.length;i;){
-      var o = this[--i];
+    for (let i=this.length;i;){
+      let o = this[--i];
       this[i] = [].concat(f.call(o,o,i),o);
     }
     this.sort(function(a,b){

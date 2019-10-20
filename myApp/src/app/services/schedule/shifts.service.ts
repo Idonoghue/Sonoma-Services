@@ -16,19 +16,30 @@ export class ShiftsService {
   }
 
   getFutureShifts() {
-      var db = firebase.firestore();
-      var shiftsCol = db.collection("shifts");
-      var current = firebase.firestore.Timestamp.now();
+      let db = firebase.firestore();
+      let shiftsCol = db.collection("shifts");
+      let current = firebase.firestore.Timestamp.now();
       return shiftsCol.where('shiftEnd', '>', current);
   }
+
+  getFutureDays() {
+    let db = firebase.firestore();
+    let daysCol = db.collection("days");
+    let current = toFirebaseTimestamp(new Date().getTime() - (60 * 60 * 24 * 1000));
+    let currentTime = new firebase.firestore.Timestamp(Math.floor(current.getTime()/1000), 0)
+    console.log('time cutoff: ', currentTime.toDate());
+
+    return daysCol.where('date', '>=', currentTime)
+  }
+
   getEmployeeFromShift(shift: any) {
-      var db = firebase.firestore();
-      var employees = db.collection("employees");
+      let db = firebase.firestore();
+      let employees = db.collection("employees");
       return employees.doc(shift.data().employee.id);
   }
   getAllEmployees() {
-      var db = firebase.firestore();
-      var employees = db.collection("employees");
+      let db = firebase.firestore();
+      let employees = db.collection("employees");
       return employees;
   }
 
@@ -52,8 +63,8 @@ export class ShiftsService {
       const SHIFT_START_COL = 2;
       const SHIFT_END_COL = 3;
 
-      var db = firebase.firestore();
-      var shiftsCol = db.collection("shifts");
+      let db = firebase.firestore();
+      let shiftsCol = db.collection("shifts");
 
       // Add a new document in collection "cities"
       shiftsCol.doc().set({
@@ -70,10 +81,32 @@ export class ShiftsService {
       });
       return;
   }
+  uploadNewDay(shiftArr) {
+    const DATE_COL = 0;
+    const DAY_INFO_COL = 1;
+    const SHIRT_START_COL = 2;
+
+    let db = firebase.firestore();
+    let shiftsCol = db.collection("days");
+
+    // Add a new document in collection "cities"
+    shiftsCol.doc().set({
+    date: shiftArr[DATE_COL],
+    dayInfo: shiftArr[DAY_INFO_COL],
+    shirtStartInfo: shiftArr[SHIRT_START_COL]
+    })
+    .then(function() {
+    console.log("Document successfully written!");
+    })
+    .catch(function(error) {
+    console.error("Error writing document: ", error);
+    });
+    return;
+  }
   removeAllShifts() {
-      var db = firebase.firestore();
-      var shiftsCol = db.collection("shifts");
-      var allShiftIDs = [];
+      let db = firebase.firestore();
+      let shiftsCol = db.collection("shifts");
+      let allShiftIDs = [];
       shiftsCol.get().then(querySnapshot => {
         querySnapshot.docs.forEach(doc => {
             shiftsCol.doc(doc.id).delete().then(function() {
@@ -85,4 +118,13 @@ export class ShiftsService {
       });
       return;
   }
+}
+function toFirebaseTimestamp(secs) {
+    console.log(new Date(secs - new Date(1970,0, 1).getTime()));
+  return new Date(secs - new Date(1970,0, 1).getTime());
+}
+function toDateTime(secs) {
+  let t = new Date(1970, 0, 1); // Epoch
+  t.setSeconds(secs);
+return t;
 }
