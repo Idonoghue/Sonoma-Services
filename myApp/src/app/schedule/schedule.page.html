@@ -15,21 +15,22 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content padding scrollX="true" scrollY="false">
     <ion-grid>
-      <ion-row flex-wrap: nowrap class="scroll" scrollX="true">
-        <ion-col *ngFor="let shiftsOnDate of shiftsOrganized" size=4 class="scroll" scrollX="true">
-            <ion-card>
+      <ion-row flex-wrap: nowrap scrollY="false">
+        <ion-col *ngFor="let shiftsOnDate of shiftsOrganized" size=4 scrollY="true">
+          <div id="fixed" scrollY="true">
+            <ion-card scrollY="true">
                 <ion-card-title>
-                    {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getWeekDay()}}
-                    {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getAbbrMonth()}}
-                    {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getDate()}}
+                  {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getWeekDay()}}
+                  {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getAbbrMonth()}}
+                  {{shiftsOnDate.shifts[0].data().shiftStart.toDate().getDate()}}
                 </ion-card-title>
                 <ion-card *ngIf="shiftsOnDate.shirtStartInfo != ''">
                   {{shiftsOnDate.shirtStartInfo}}
                 </ion-card>
                 <ion-card-content>
-                {{shiftsOnDate.dayInfo}}
+                  {{shiftsOnDate.dayInfo}}
                 </ion-card-content>
                 <ion-card *ngFor="let type of shiftTypes">
                     <ion-card-title>{{type}}</ion-card-title>
@@ -52,6 +53,7 @@
                     </ng-container>
                 </ion-card>
             </ion-card>
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>
