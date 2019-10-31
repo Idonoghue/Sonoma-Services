@@ -109,6 +109,8 @@ export class SchedulePage implements OnInit {
           newObj["shirtStartInfo"] = ""
           console.log(newObj);
           this.shiftsOrganized.push(newObj);
+          this.shiftsOrganized[dateIter].shifts[shiftIter] = this.shifts[i];
+          shiftIter++;
         }
         else break;
       }
